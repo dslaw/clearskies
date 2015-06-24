@@ -13,7 +13,6 @@
 Rcpp::NumericVector exrad(Rcpp::NumericVector dayofyear, int times) {
 
     const double deg2rad = M_PI/180;
-    const double rad2deg = 180/M_PI;
 
     Rcpp::NumericVector dayangle = 360.0 * (dayofyear - 1.0) / 365.0;
     Rcpp::NumericVector d2 = 2.0 * dayangle;

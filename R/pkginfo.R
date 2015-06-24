@@ -65,6 +65,30 @@ NULL
 #'
 "locations"
 
+#' Sample solar irradiance dataset.
+#'
+#' A dataset of measured global horizontal irradiance (GHI) from Eugene, Oregon
+#' for the month of September, 2014.
+#'
+#' @format A data.frame with 7 columns:
+#' \describe{
+#'      \item{Year}{2014}
+#'      \item{Month}{September}
+#'      \item{DayOfMonth}{The day of the month, 1 through 30}
+#'      \item{DayOfYear}{The day of the year, 244 through 273}
+#'      \item{Interval}{Time between observations in minutes}
+#'      \item{Minutes}{Minutes elapsed since midnight}
+#'      \item{GHI}{Measured global horizontal solar irradiance}
+#' }
+#'
+#' @source
+#' Raw data available through the University of Oregon Solar Radiation
+#' Monitoring Lab website:
+#'
+#' http://solardat.uoregon.edu/SelectArchival.html
+#'
+"eugene"
+
 ## For Rcpp
 #' @useDynLib clearskies
 

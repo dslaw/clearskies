@@ -1,5 +1,8 @@
 #include <algorithm>   // replace
+#include <stdexcept>   // range_error
 #include <Rcpp.h>
+
+#include <map>
 
 //' Calculate line length variability.
 //'
@@ -56,11 +59,11 @@ double sigma(Rcpp::NumericVector x) {
 
     sigma = sd(s) / mean(x);
 
-    if (isnan(sigma) || isinf(sigma))
+    if (std::isnan(sigma) || std::isinf(sigma))
         // catch division by 0
         return 0.0;
-    else
-        return sigma;
+
+    return sigma;
 }
 
 //' Maximum deviation of the measured irradiance from the clear sky slope.
@@ -101,9 +104,9 @@ double S(Rcpp::NumericVector x, Rcpp::NumericVector cs) {
 //'
 //' @keywords internal
 //
-Rcpp::List calculate_criterion(Rcpp::NumericVector x, Rcpp::NumericVector cs) {
+std::map<int, double> calculate_criterion(Rcpp::NumericVector x, Rcpp::NumericVector cs) {
 
-    Rcpp::List result(5);
+    std::map<int, double> result;
 
     double mean_diff = mean(x) - mean(cs);
     double max_diff = max(x) - max(cs);
@@ -136,14 +139,14 @@ Rcpp::List calculate_criterion(Rcpp::NumericVector x, Rcpp::NumericVector cs) {
 //'
 //' @keywords internal
 //
-bool evaluate_criterion(Rcpp::List criterion, Rcpp::List thresholds) {
+bool evaluate_criterion(std::map<int, double> criterion, Rcpp::List thresholds) {
     // Compare clear skies criterion to threshold values.
     // All criterion must be between their respective thresholds (inclusive)
     // to return True (clear).
     // thresholds must be checked and ordered in R
     // i.e. must be length 5
 
-    Rcpp::List::iterator i;
+    std::map<int, double>::iterator i;
     Rcpp::List::iterator j = thresholds.begin();
     Rcpp::NumericVector bounds;
     double criteria;
@@ -152,7 +155,7 @@ bool evaluate_criterion(Rcpp::List criterion, Rcpp::List thresholds) {
         // comparison may not work correctly if dereferenced iterators are
         // compared directly
         bounds = *j;
-        criteria = *i;
+        criteria = i->second;
 
         if (criteria < min(bounds) || criteria > max(bounds)) {
             return false;
@@ -203,11 +206,13 @@ Rcpp::LogicalVector clear_points(Rcpp::NumericVector x, Rcpp::NumericVector cs,
 
     if (n != cs.size())
         throw std::range_error("x must be the same length as cs");
-    if (window_len <= 0)
-        throw std::range_error("window_len must be greater than 0");
+    if (window_len <= 0 || window_len > n)
+        throw std::range_error("Incorrect value to window_len");
+    if (thresholds.size() != 5)
+        throw std::range_error("Thresholds must be a list of length 5");
 
     bool allclear;
-    Rcpp::List criterion(5);
+    std::map<int, double> criterion;
 
     Rcpp::LogicalVector clear(n);
     Rcpp::NumericVector obs(window_len);

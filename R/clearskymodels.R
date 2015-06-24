@@ -82,7 +82,35 @@ clear_sky <- function(model, x, y, ...) {
     return(inner)
 }
 
-#' Fit Robledo-Soler clear sky model.
+#' Fit Adnot-Bourges-Campana-Gicquel (ABCG) clear sky model.
+#'
+#' @param dayofyear The day of year to fit the model to. May be either a single
+#' value or a vector.
+#' @param year The year to fit the model to. The model is fit over both
+#' dayofyear and year, with the shorter vector being recycled as normal.
+#' @param tz UTC Offset. Ex: Eastern Standard Time = -5.
+#' @param latitude Latitude at the location for which the model is to be fit.
+#' @param longitude Longitude at the location for which the model is to be fit.
+#' @param interval Number of minutes between clear sky points. Defaults to 1
+#' (every minute). Must be an integer between 1 and 60, inclusive.
+#' @param parameters Adnot-Bourges-Campana-Gicquel model parameters. Named
+#' vector or list containing values for a, b and c.
+#'
+#' @return Vector of fitted irradiance values for the given time period.
+#'
+#' @name ABCG
+#'
+#' @keywords internal
+ABCG <- function(dayofyear, year, tz, latitude, longitude, interval, ...,
+                 parameters = c(a = 951.39, b = 1.15)) {
+
+    a = parameters[['a']]; b = parameters[['b']]
+    z = zenith(dayofyear, year, tz, latitude, longitude, interval)
+    ghi = a * cos(z*pi/180)^b
+    return(ghi)
+}
+
+#' Fit Robledo-Soler (RS) clear sky model.
 #'
 #' @param dayofyear The day of year to fit the model to. May be either a single
 #' value or a vector.
@@ -147,7 +175,7 @@ Ineichen <- function(dayofyear, year, tz, latitude, longitude, interval, elevati
     I1 = which.min(abs(latitude-La))
     I2 = which.min(abs(longitude-Lo))
 
-    I.o = exrad(dayofyear, times = 60L*24L/interval)
+    io = exrad(dayofyear, times = 60L*24L/interval)
     z = zenith(dayofyear, year, tz, latitude, longitude, interval)
 
     AM = (cos(z*pi/180) + a * (90 + b - z) ** -c ) ** -1
@@ -158,7 +186,7 @@ Ineichen <- function(dayofyear, year, tz, latitude, longitude, interval, elevati
     cg1 = 0.0000509 * elevation + 0.868
     cg2 = 0.0000392 * elevation + 0.0387
 
-    ghi = cg1 * I.o * cos(z*pi/180)* exp(-cg2*AM*(fh1+fh2*(TL-1))) * exp(0.01*(AM)^(1.8))
+    ghi = cg1 * io * cos(z*pi/180)* exp(-cg2*AM*(fh1+fh2*(TL-1))) * exp(0.01*(AM)^(1.8))
 
     return(ghi)
 }
