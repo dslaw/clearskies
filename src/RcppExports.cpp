@@ -5,9 +5,9 @@
 
 using namespace Rcpp;
 
-// clear_points
-Rcpp::LogicalVector clear_points(Rcpp::NumericVector x, Rcpp::NumericVector cs, Rcpp::List thresholds, int window_len);
-RcppExport SEXP clearskies_clear_points(SEXP xSEXP, SEXP csSEXP, SEXP thresholdsSEXP, SEXP window_lenSEXP) {
+// clear_pts
+Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs, Rcpp::List thresholds, int window_len);
+RcppExport SEXP clearskies_clear_pts(SEXP xSEXP, SEXP csSEXP, SEXP thresholdsSEXP, SEXP window_lenSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -15,7 +15,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type cs(csSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type thresholds(thresholdsSEXP);
     Rcpp::traits::input_parameter< int >::type window_len(window_lenSEXP);
-    __result = Rcpp::wrap(clear_points(x, cs, thresholds, window_len));
+    __result = Rcpp::wrap(clear_pts(x, cs, thresholds, window_len));
     return __result;
 END_RCPP
 }

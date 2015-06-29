@@ -129,9 +129,8 @@ NULL
 #' Global Horizontal Irradiance Clear Sky Models: Implementation and Analysis,
 #' Reno et al, 2012, pp. 28-36.
 #'
-#' @export
-clear_points <- function(x, cs, thresholds, window_len) {
-    .Call('clearskies_clear_points', PACKAGE = 'clearskies', x, cs, thresholds, window_len)
+clear_pts <- function(x, cs, thresholds, window_len) {
+    .Call('clearskies_clear_pts', PACKAGE = 'clearskies', x, cs, thresholds, window_len)
 }
 
 #' Root mean squared error.

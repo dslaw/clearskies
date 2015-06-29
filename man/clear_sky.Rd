@@ -4,37 +4,68 @@
 \alias{clear_sky}
 \title{Fit clear sky model.}
 \usage{
-clear_sky(model, x, y, ...)
+clear_sky(model, x, y, data, dayofyear, year, interval, tz, latitude, longitude,
+  elevation, parameters)
 }
 \arguments{
 \item{model}{Name of model to be fit.}
 
 \item{x}{Dataframe, named list or named vector containing date information
-for model. Must have elements named 'DayOfYear', 'Year' and 'Interval'.}
+for model. Must have elements named 'DayOfYear', 'Year' and 'Interval'.
+Alternatively, dayofyear, year and interval can be passed directly to
+clear_sky as arguments.}
 
 \item{y}{Dataframe, named list or named vector containing location information
-for model. Must have elements named 'Timezone' or 'TZ', 'Longitude',
-'Latitude' and, if necessary for the model, 'Elevation'.}
+for model. Must have elements named 'Latitude', 'Longitude', 'Timezone' or
+'TZ' and, if necessary for the model, 'Elevation'. Alternatively,
+latitude, longitude, timezone and elevation can be passed directly to
+clear_sky as arguments.}
 
-\item{...}{Additional arguments to the model. Normally a named vector of
-model parameters.}
+\item{data}{Vector of observed data corresponding to the model. Optional.}
+
+\item{dayofyear}{A vector of the day(s) of the year that the model is to be
+fit to. Ignore if using x.}
+
+\item{year}{A vector of the year(s) that the model is to be fit to. If using
+x, ignore.}
+
+\item{interval}{Interval, in minutes, for which the model is to be fit,
+starting from midnight. Ignore if using x.}
+
+\item{tz}{Timezone/UTC Offset. Ignore if using y.}
+
+\item{latitude}{Latitude of the location for the model. Ignore if using y.}
+
+\item{longitude}{Longitude of the location for the model. Ignore if using y.}
+
+\item{elevation}{Elevation of the location for the model. Ignore if using y.}
+
+\item{parameters}{Optional named vector or list of parameters for the model.}
 }
 \value{
-A vector of containing the modeled GHI values for each day at each
-specified interval.
+An object of class 'clearsky' containing named elements observed,
+predicted and model; predicted contains the modeled GHI values for each day
+for the specified interval.
 }
 \description{
 Fit clear sky model.
 }
 \examples{
 # Fit Robledo-Soler model to the year of 2014 for Eugene, Oregon
-time_info <- data.frame(DayOfYear = 1:365, Year = rep(2014, 365),
-                        Interval = rep(1, 365))
-location_info <- data.frame(Latitude = 44.05, Longitude = -123.07,
-                            Elevation = 150, TZ = -8)
+
+time_info <- list(DayOfYear = 1:365,
+                  Year = 2014,
+                  Interval = 1)
+location_info <- list(Latitude = 44.05,
+                      Longitude = -123.07,
+                      TZ = -8)
 model_params <- c(a = 1000, b = 1.5, c = 0.2)
 
 model <- clear_sky('RS', x = time_info, y = location_info,
                    parameters = model_params)
+
+# Alternatively, pass time and location arguments direct to the model
+model <- clear_sky('RS', dayofyear = 1:365, year = 2014, interval = 1,
+                   latitude = 44.05, longitude = -123.07, tz = -8)
 }
 

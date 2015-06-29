@@ -17,6 +17,8 @@ src/*.o
 src/*.so
 src/*.dll
 
-# eh
+# WIP
 R/clearskymodels-staging.R
+R/clearskys3.R
+tests/*
 

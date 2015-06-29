@@ -197,10 +197,9 @@ bool evaluate_criterion(std::map<int, double> criterion, Rcpp::List thresholds) 
 //' Global Horizontal Irradiance Clear Sky Models: Implementation and Analysis,
 //' Reno et al, 2012, pp. 28-36.
 //'
-//' @export
 // [[Rcpp::export]]
-Rcpp::LogicalVector clear_points(Rcpp::NumericVector x, Rcpp::NumericVector cs,
-                                 Rcpp::List thresholds, int window_len) {
+Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs,
+                              Rcpp::List thresholds, int window_len) {
 
     int n = x.size();
 
