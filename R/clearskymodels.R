@@ -82,7 +82,12 @@ clear_sky <- function(model, x, y, data,
 
     model.name = as.character(substitute(model))
     model = .pass_args(model)
-    fit = model(x, y, parameters)
+
+    if (!missing(parameters))
+        fit = model(x = x, y = y, parameters = parameters)
+    else
+        fit = model(x = x, y = y)
+
 
     object = list(observed = if (has_data) data else NULL,
                 predicted = fit,
