@@ -20,5 +20,4 @@ src/*.dll
 # WIP
 R/clearskymodels-staging.R
 R/clearskys3.R
-tests/*
 
