@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{clear_pts}
 \alias{clear_pts}
-\title{Clear sky detection.}
+\title{Clear sky detection}
 \usage{
 clear_pts(x, cs, thresholds, window_len)
 }

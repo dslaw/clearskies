@@ -1,8 +1,7 @@
 #include <algorithm>   // replace
 #include <stdexcept>   // range_error
-#include <Rcpp.h>
-
 #include <map>
+#include <Rcpp.h>
 
 //' Calculate line length variability.
 //'
@@ -165,7 +164,7 @@ bool evaluate_criterion(std::map<int, double> criterion, Rcpp::List thresholds) 
     return true;
 }
 
-//' Clear sky detection.
+//' Clear sky detection
 //'
 //' Determine clear points using a rolling window and five clear sky criterion.
 //'
@@ -200,6 +199,7 @@ bool evaluate_criterion(std::map<int, double> criterion, Rcpp::List thresholds) 
 // [[Rcpp::export]]
 Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs,
                               Rcpp::List thresholds, int window_len) {
+    // Results are not always accurate when window_len = 1
 
     int n = x.size();
 
@@ -238,7 +238,9 @@ Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs,
     return clear;
 }
 
-//' Root mean squared error.
+//' Root mean squared error
+//'
+//' Calculate root mean squared error.
 //'
 //' @param x Numeric vector.
 //' @param y Numeric vector.

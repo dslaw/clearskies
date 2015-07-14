@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{rmse}
 \alias{rmse}
-\title{Root mean squared error.}
+\title{Root mean squared error}
 \usage{
 rmse(x, y)
 }
@@ -15,6 +15,6 @@ rmse(x, y)
 Square root of the mean squared error between x and y.
 }
 \description{
-Root mean squared error.
+Calculate root mean squared error.
 }
 

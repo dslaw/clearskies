@@ -2,7 +2,7 @@
 % Please edit documentation in R/clearskymodels.R
 \name{RS}
 \alias{RS}
-\title{Fit Robledo-Soler (RS) clear sky model.}
+\title{Robledo-Soler clear sky model}
 \usage{
 RS(dayofyear, year, tz, latitude, longitude, interval, ..., parameters = c(a =
   1159.24, b = 1.179, c = -0.0019))

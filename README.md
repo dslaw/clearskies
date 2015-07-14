@@ -9,7 +9,7 @@ The R package can be installed from github using devtools:
 ```
 install.packages("devtools")
 library(devtools)
-install_github('dslaw/clearskies')
+install_github("dslaw/clearskies")
 library(clearskies)
 ```
 
@@ -33,7 +33,7 @@ Fitting the Robledo-Soler model to Easter day, 2014.
 eugene_oregon <- list(Latitude = 44.05, Longitude = -123.07, Timezone = -8)
 day <- list(DayOfYear = 110, Year = 2014, Interval = 1)
 params <- list(a = 1159.24, b = 1.179, c = -0.0019) # defaults
-model <- clear_sky('RS', x = day, y = eugene_oregon, parameters = params)
+model <- clear_sky("RS", x = day, y = eugene_oregon, parameters = params)
 
 model$model
 # [1] "RS"

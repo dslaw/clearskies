@@ -2,7 +2,7 @@
 % Please edit documentation in R/clearskymodels.R
 \name{clear_sky}
 \alias{clear_sky}
-\title{Fit clear sky model.}
+\title{Clear sky models}
 \usage{
 clear_sky(model, x, y, data, dayofyear, year, interval, tz, latitude, longitude,
   elevation, parameters)
@@ -43,9 +43,11 @@ starting from midnight. Ignore if using x.}
 \item{parameters}{Optional named vector or list of parameters for the model.}
 }
 \value{
-An object of class 'clearsky' containing named elements observed,
-predicted and model; predicted contains the modeled GHI values for each day
-for the specified interval.
+An object of class 'clearsky' containing the components predicted, a
+vector of predicted GHI values corresponding to the specified interval,
+model, the model name, and time.interval, the specified interval. If observed
+data is passed via the data argument, the 'clearsky' object will also contain
+the component observed, the vector of observed data.
 }
 \description{
 Fit clear sky model.

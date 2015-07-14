@@ -2,7 +2,7 @@
 % Please edit documentation in R/clearskymodels.R
 \name{ABCG}
 \alias{ABCG}
-\title{Fit Adnot-Bourges-Campana-Gicquel (ABCG) clear sky model.}
+\title{Adnot-Bourges-Campana-Gicquel clear sky model}
 \usage{
 ABCG(dayofyear, year, tz, latitude, longitude, interval, ..., parameters = c(a
   = 951.39, b = 1.15))

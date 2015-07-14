@@ -2,17 +2,23 @@
 % Please edit documentation in R/clearskymethods.R
 \name{clear_points}
 \alias{clear_points}
-\title{Clear sky detection.}
+\alias{clear_points.clearsky}
+\alias{clear_points.default}
+\title{Clear sky detection}
 \usage{
 clear_points(x, ...)
+
+\method{clear_points}{default}(x, cs, thresholds, window_len, ...)
+
+\method{clear_points}{clearsky}(x, thresholds, window_len, ...)
 }
 \arguments{
-\item{x}{Numeric vector of measured irradiance values.}
+\item{x}{Numeric vector of measured irradiance values or object of clear_sky
+class containing both observed and predicted members.}
+
+\item{...}{ignored.}
 
 \item{cs}{Numeric vector of predicted irradiance from a clear sky model.}
-
-\item{object}{Object of class clearsky containing observed and predicted
-members. Used by corresponding method.}
 
 \item{thresholds}{List of vectors, each vector containing the threshold
 values for their respective clear sky criteria. Each vector must have length
@@ -27,8 +33,8 @@ order:
     \item Maximum deviation from clear sky slope
 }}
 
-\item{window_len}{Length of window, in minutes, used in calculating
-criterion. Must be a positive integer.}
+\item{window_len}{Length of window to use in calculating criterion. Must be
+a positive integer.}
 }
 \value{
 The form of the value returned by 'clear_points' depends on the class
@@ -41,7 +47,9 @@ The clearsky method returns a clearsky object with member 'clear' set to a
 logical vector of the same length as x.
 }
 \description{
-Determine clear points using a rolling window and five clear sky criterion.
+Implementation of the clear sky detection algorithm found in Reno et al,
+2012. (See References). Determines clear points using a rolling window and
+five criterion.
 }
 \details{
 A point is declared clear if it is determined to be clear at least once.

@@ -97,7 +97,7 @@ NULL
 #' @keywords internal
 NULL
 
-#' Clear sky detection.
+#' Clear sky detection
 #'
 #' Determine clear points using a rolling window and five clear sky criterion.
 #'
@@ -133,7 +133,9 @@ clear_pts <- function(x, cs, thresholds, window_len) {
     .Call('clearskies_clear_pts', PACKAGE = 'clearskies', x, cs, thresholds, window_len)
 }
 
-#' Root mean squared error.
+#' Root mean squared error
+#'
+#' Calculate root mean squared error.
 #'
 #' @param x Numeric vector.
 #' @param y Numeric vector.

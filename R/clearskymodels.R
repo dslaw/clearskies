@@ -8,6 +8,8 @@
 ## Ellipsis in model parameters allow extra arguments to be passed through
 ## the wrapper function and ignored if they're not used
 
+#' Clear sky models
+#'
 #' Fit clear sky model.
 #'
 #' @param model Name of model to be fit.
@@ -33,9 +35,11 @@
 #' @param elevation Elevation of the location for the model. Ignore if using y.
 #' @param parameters Optional named vector or list of parameters for the model.
 #'
-#' @return An object of class 'clearsky' containing named elements observed,
-#' predicted and model; predicted contains the modeled GHI values for each day
-#' for the specified interval.
+#' @return An object of class 'clearsky' containing the components predicted, a
+#' vector of predicted GHI values corresponding to the specified interval,
+#' model, the model name, and time.interval, the specified interval. If observed
+#' data is passed via the data argument, the 'clearsky' object will also contain
+#' the component observed, the vector of observed data.
 #'
 #' @examples
 #' # Fit Robledo-Soler model to the year of 2014 for Eugene, Oregon
@@ -62,12 +66,23 @@ clear_sky <- function(model, x, y, data,
                       elevation, parameters) {
 
     has_data = !missing(data)
+    has_parameters = !missing(parameters)
 
     if (has_data && !is.numeric(data))
         stop('data must be numeric')
 
+    if (has_parameters && !length(names(parameters)))
+        stop('parameters must be named')
+
     if (!missing(interval) && length(interval) != 1)
         stop('Interval must contain a single unique value')
+
+    if (is.character(model))
+        model.name = model
+    else if (is.function(model))
+        model.name = as.character(substitute(model))
+    else
+        stop('invalid model')
 
     if (missing(x))
         x = list(DayOfYear = dayofyear,
@@ -80,18 +95,25 @@ clear_sky <- function(model, x, y, data,
                  Elevation = if (!missing(elevation)) elevation else NULL,
                  TZ = tz)
 
-    model.name = as.character(substitute(model))
+    # convert vectors to lists to use '$' for extracting elements
+    x = as.list(x)
+    y = as.list(y)
+
     model = .pass_args(model)
 
-    if (!missing(parameters))
+    # .pass_args checks interval input is valid. ternary for naming
+    # inconsistencies
+    interval = if (length(x$Interval)) unique(x$Interval) else unique(x$interval)
+
+    if (has_parameters)
         fit = model(x = x, y = y, parameters = parameters)
     else
         fit = model(x = x, y = y)
 
-
-    object = list(observed = if (has_data) data else NULL,
-                predicted = fit,
-                model = model.name)
+    object = list(model = model.name,
+                  observed = if (has_data) data else NULL,
+                  predicted = fit,
+                  time.interval = interval)
     structure(object, class = 'clearsky')
 }
 
@@ -105,10 +127,6 @@ clear_sky <- function(model, x, y, data,
 
         if (any( lapply(y, length) > 1 ))
             stop('Too many values in y')
-
-        # convert to list to use '$' for fuzzy matching of names
-        x = as.list(x)
-        y = as.list(y)
 
         names(x) = tolower(names(x))
         names(y) = tolower(names(y))
@@ -136,6 +154,8 @@ clear_sky <- function(model, x, y, data,
     return(inner)
 }
 
+#' Adnot-Bourges-Campana-Gicquel clear sky model
+#'
 #' Fit Adnot-Bourges-Campana-Gicquel (ABCG) clear sky model.
 #'
 #' @param dayofyear The day of year to fit the model to. May be either a single
@@ -164,6 +184,8 @@ ABCG <- function(dayofyear, year, tz, latitude, longitude, interval, ...,
     return(ghi)
 }
 
+#' Robledo-Soler clear sky model
+#'
 #' Fit Robledo-Soler (RS) clear sky model.
 #'
 #' @param dayofyear The day of year to fit the model to. May be either a single
@@ -184,15 +206,17 @@ ABCG <- function(dayofyear, year, tz, latitude, longitude, interval, ...,
 #'
 #' @keywords internal
 RS <- function(dayofyear, year, tz, latitude, longitude, interval, ...,
-               parameters = c('a' = 1159.24, 'b' = 1.179, 'c' = -0.0019)) {
+               parameters = c(a = 1159.24, b = 1.179, c = -0.0019)) {
 
     a = parameters[['a']]; b = parameters[['b']]; c = parameters[['c']]
 
     z = zenith(dayofyear, year, tz, latitude, longitude, interval)
-    ghi = a * cos(z*pi/180)^b * exp(c*(90-z))
+    ghi = a * cos(z*pi/180)^b * exp(c * (90-z))
     return(ghi)
 }
 
+#' Ineichen-Perez clear sky model
+#'
 #' Fit Ineichen-Perez clear sky model.
 #'
 #' @param dayofyear The day of year to fit the model to. May be either a single
@@ -213,7 +237,7 @@ RS <- function(dayofyear, year, tz, latitude, longitude, interval, ...,
 #'
 #' @keywords internal
 Ineichen <- function(dayofyear, year, tz, latitude, longitude, interval, elevation,
-                     parameters = c('a' = 0.50572, 'b' = 6.07995, 'c' = 1.6364, 'TL' = 3)) {
+                     parameters = c(a = 0.50572, b = 6.07995, c = 1.6364, TL = 3)) {
 
     # elevation may be null if using .pass_args
     if (is.null(elevation) || missing(elevation))

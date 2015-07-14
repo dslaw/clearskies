@@ -2,6 +2,8 @@
 
 S3method(clear_points,clearsky)
 S3method(clear_points,default)
+S3method(plot,clearsky)
+S3method(summary,clearsky)
 export(clear_points)
 export(clear_sky)
 export(rmse)

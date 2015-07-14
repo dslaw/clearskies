@@ -2,7 +2,7 @@
 % Please edit documentation in R/clearskymodels.R
 \name{Ineichen}
 \alias{Ineichen}
-\title{Fit Ineichen-Perez clear sky model.}
+\title{Ineichen-Perez clear sky model}
 \usage{
 Ineichen(dayofyear, year, tz, latitude, longitude, interval, elevation,
   parameters = c(a = 0.50572, b = 6.07995, c = 1.6364, TL = 3))
