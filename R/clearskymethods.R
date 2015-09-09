@@ -94,7 +94,7 @@ summary.clearsky <- function(object, ...) {
 }
 
 #' @export
-plot.clearsky <- function(x, ..., use.ggplot = FALSE) {
+plot.clearsky <- function(x, ..., use.ggplot = TRUE) {
 
     stopifnot( inherits(x, 'clearsky') )
 
@@ -117,7 +117,7 @@ plot.clearsky <- function(x, ..., use.ggplot = FALSE) {
 
     line_width = 1.5
 
-    if (requireNamespace('ggplot2', quietly = TRUE) && use.ggplot) {
+    if (use.ggplot && requireNamespace('ggplot2', quietly = TRUE)) {
         y = data.frame(Type = rep(c('Observed', 'Predicted'), each = length(ix)),
                        Index = rep(ix, 2),
                        GHI = c(obs, pred))
