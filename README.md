@@ -60,4 +60,4 @@ require(ggplot2)
 p <- plot(model, use.ggplot = TRUE)
 p + ggtitle("Robledo-Soler Model")
 ```
-<img src="https://github.com/dslaw/clearskies/blob/update_readme/figs/example.png" width="75%" height="75%">
+<img src="https://github.com/dslaw/clearskies/blob/master/figs/example.png" width="75%" height="75%">
