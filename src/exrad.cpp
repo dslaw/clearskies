@@ -16,15 +16,13 @@ Rcpp::NumericVector exrad(Rcpp::NumericVector dayofyear, int times) {
 
     Rcpp::NumericVector dayangle = 360.0 * (dayofyear - 1.0) / 365.0;
     Rcpp::NumericVector d2 = 2.0 * dayangle;
-    Rcpp::NumericVector erv; // earth radius vector
-    Rcpp::NumericVector ret;
 
     // Earth radius vector * solar constant = solar energy
-    erv = 1.00011 + (0.034221 * Rcpp::cos(deg2rad * dayangle)) + (0.00128 * Rcpp::sin(deg2rad * dayangle));
+    Rcpp::NumericVector erv = 1.00011 + (0.034221 * Rcpp::cos(deg2rad * dayangle)) + (0.00128 * Rcpp::sin(deg2rad * dayangle));
     erv += 0.000719 * (Rcpp::cos(deg2rad * d2)) + (0.000077 * Rcpp::sin(deg2rad * d2));
     erv = 1366.1 * erv;
 
-    ret = rep_each(erv, times);
+    Rcpp::NumericVector ret = rep_each(erv, times);
     return ret;
 }
 

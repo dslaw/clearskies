@@ -13,9 +13,6 @@ install_github("dslaw/clearskies")
 library(clearskies)
 ```
 
-Installation has been tested on Windows and Linux (Debian 8.0) with R 3.1.1
-"Sock it to Me".
-
 ## Models
 
 | Clear Sky Model               | Function Name | Parameter arguments |

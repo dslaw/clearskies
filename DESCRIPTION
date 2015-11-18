@@ -8,7 +8,7 @@ Maintainer: David Law <davidsamuellaw@gmail.com>
 Description: Fit clear sky models for solar irradiance and use to run clear sky
     detection.
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.11.6)
+Imports: Rcpp (>= 0.12.2)
 Suggests: testthat,
     ggplot2
 LinkingTo: Rcpp

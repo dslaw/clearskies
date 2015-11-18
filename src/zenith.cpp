@@ -32,8 +32,9 @@ Rcpp::NumericVector julian_day(Rcpp::NumericVector dayofyear, Rcpp::NumericVecto
 
 Rcpp::NumericVector universal_gmt(int interval, double tz) {
 
-    if (interval > 60 || interval < 1)
+    if (interval > 60 || interval < 1) {
         throw std::range_error("Interval must be between 1 and 60");
+    }
 
     int n = 1440 / interval; // 60 * 24 = 1440 minutes/day
     int step = 60 / interval;
@@ -47,9 +48,8 @@ Rcpp::NumericVector universal_gmt(int interval, double tz) {
 
     // faster than using rep_len
     Rcpp::NumericVector hour(n);
-    Rcpp::NumericVector::iterator i;
 
-    for (i = hour.begin(); i != hour.end(); i += step, ++it) {
+    for (Rcpp::NumericVector::iterator i = hour.begin(); i != hour.end(); i += step, ++it) {
         std::fill(i, i + step, *it);
     }
 

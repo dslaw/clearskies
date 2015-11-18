@@ -53,14 +53,13 @@ double L(Rcpp::NumericVector x) {
 //
 double sigma(Rcpp::NumericVector x) {
 
-    double sigma;
     Rcpp::NumericVector s = diff(x);
+    double sigma = sd(s) / mean(x);
 
-    sigma = sd(s) / mean(x);
-
-    if (std::isnan(sigma) || std::isinf(sigma))
+    if (std::isnan(sigma) || std::isinf(sigma)) {
         // catch division by 0
         return 0.0;
+    }
 
     return sigma;
 }
@@ -145,16 +144,13 @@ bool evaluate_criterion(std::map<int, double> criterion, Rcpp::List thresholds) 
     // thresholds must be checked and ordered in R
     // i.e. must be length 5
 
-    std::map<int, double>::iterator i;
     Rcpp::List::iterator j = thresholds.begin();
-    Rcpp::NumericVector bounds;
-    double criteria;
 
-    for (i = criterion.begin(); i != criterion.end(); ++i, ++j) {
+    for (std::map<int, double>::iterator i = criterion.begin(); i != criterion.end(); ++i, ++j) {
         // comparison may not work correctly if dereferenced iterators are
         // compared directly
-        bounds = *j;
-        criteria = i->second;
+        Rcpp::NumericVector bounds = *j;
+        double criteria = i->second;
 
         if (criteria < min(bounds) || criteria > max(bounds)) {
             return false;
@@ -210,23 +206,19 @@ Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs,
     if (thresholds.size() != 5)
         throw std::range_error("Thresholds must be a list of length 5");
 
-    bool allclear;
-    std::map<int, double> criterion;
-
     Rcpp::LogicalVector clear(n);
     Rcpp::NumericVector obs(window_len);
     Rcpp::NumericVector pred(window_len);
 
-    Rcpp::NumericVector::iterator i;
     Rcpp::NumericVector::iterator j = cs.begin();
     Rcpp::LogicalVector::iterator k = clear.begin();
 
-    for (i = x.begin(); i != x.end() - window_len + 1; ++i, ++j, ++k) {
+    for (Rcpp::NumericVector::iterator i = x.begin(); i != x.end() - window_len + 1; ++i, ++j, ++k) {
         obs.assign(i, i + window_len);
         pred.assign(j, j + window_len);
 
-        criterion = calculate_criterion(obs, pred);
-        allclear = evaluate_criterion(criterion, thresholds);
+        std::map<int, double> criterion = calculate_criterion(obs, pred);
+        bool allclear = evaluate_criterion(criterion, thresholds);
 
         if (allclear) {
             std::replace(k, k + window_len, false, true);
