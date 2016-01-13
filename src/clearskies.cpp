@@ -144,6 +144,7 @@ bool evaluate_criterion(std::map<int, double> criterion, Rcpp::List thresholds) 
     // thresholds must be checked and ordered in R
     // i.e. must be length 5
 
+    {
     Rcpp::List::iterator j = thresholds.begin();
 
     for (std::map<int, double>::iterator i = criterion.begin(); i != criterion.end(); ++i, ++j) {
@@ -155,6 +156,7 @@ bool evaluate_criterion(std::map<int, double> criterion, Rcpp::List thresholds) 
         if (criteria < min(bounds) || criteria > max(bounds)) {
             return false;
         }
+    }
     }
 
     return true;
@@ -210,6 +212,7 @@ Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs,
     Rcpp::NumericVector obs(window_len);
     Rcpp::NumericVector pred(window_len);
 
+    {
     Rcpp::NumericVector::iterator j = cs.begin();
     Rcpp::LogicalVector::iterator k = clear.begin();
 
@@ -225,6 +228,7 @@ Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs,
         }
 
         Rcpp::checkUserInterrupt();
+    }
     }
 
     return clear;

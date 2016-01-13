@@ -44,13 +44,16 @@ Rcpp::NumericVector universal_gmt(int interval, double tz) {
     // the speed increase isn't really worth it
     Rcpp::IntegerVector unique_hours = Rcpp::seq_len(24);
     unique_hours = unique_hours - 1;
-    Rcpp::IntegerVector::iterator it = unique_hours.begin();
 
     // faster than using rep_len
     Rcpp::NumericVector hour(n);
 
+    {
+    Rcpp::IntegerVector::iterator it = unique_hours.begin();
+
     for (Rcpp::NumericVector::iterator i = hour.begin(); i != hour.end(); i += step, ++it) {
         std::fill(i, i + step, *it);
+    }
     }
 
     Rcpp::IntegerVector unique_minutes = Rcpp::seq_len(60);
