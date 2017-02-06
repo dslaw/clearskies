@@ -1,6 +1,5 @@
 #include <algorithm>   // replace
 #include <stdexcept>   // range_error
-#include <map>
 #include <Rcpp.h>
 
 //' Calculate line length variability.
@@ -23,9 +22,8 @@
 //'
 //' @keywords internal
 //
-double L(Rcpp::NumericVector x) {
+double L(Rcpp::NumericVector &x) {
     // (t_(i+1) - t_(i))^2 is always 1
-
     return sum(sqrt(pow(diff(x), 2) + 1));
 }
 
@@ -51,13 +49,12 @@ double L(Rcpp::NumericVector x) {
 //'
 //' @keywords internal
 //
-double sigma(Rcpp::NumericVector x) {
-
+double sigma(Rcpp::NumericVector &x) {
     Rcpp::NumericVector s = diff(x);
     double sigma = sd(s) / mean(x);
 
+    // catch division by 0
     if (std::isnan(sigma) || std::isinf(sigma)) {
-        // catch division by 0
         return 0.0;
     }
 
@@ -87,8 +84,7 @@ double sigma(Rcpp::NumericVector x) {
 //'
 //' @keywords internal
 //
-double S(Rcpp::NumericVector x, Rcpp::NumericVector cs) {
-
+double S(Rcpp::NumericVector &x, Rcpp::NumericVector &cs) {
     return max(abs(diff(x) - diff(cs)));
 }
 
@@ -102,23 +98,14 @@ double S(Rcpp::NumericVector x, Rcpp::NumericVector cs) {
 //'
 //' @keywords internal
 //
-std::map<int, double> calculate_criterion(Rcpp::NumericVector x, Rcpp::NumericVector cs) {
-
-    std::map<int, double> result;
-
-    double mean_diff = mean(x) - mean(cs);
-    double max_diff = max(x) - max(cs);
-    double line_len_diff = L(x) - L(cs);
-    double sigma_diff = sigma(x) - sigma(cs);
-    double max_dev = S(x, cs);
-
-    result[0] = mean_diff;
-    result[1] = max_diff;
-    result[2] = line_len_diff;
-    result[3] = sigma_diff;
-    result[4] = max_dev;
-
-    return result;
+Rcpp::NumericVector calculate_criterion(Rcpp::NumericVector &x, Rcpp::NumericVector &cs) {
+    Rcpp::NumericVector criterion(5);
+    criterion[0] = mean(x) - mean(cs);    // mean difference
+    criterion[1] = max(x) - max(cs);      // max difference
+    criterion[2] = L(x) - L(cs);          // line length difference
+    criterion[3] = sigma(x) - sigma(cs);  // sigma difference
+    criterion[4] = S(x, cs);              // max deviance
+    return criterion;
 }
 
 //' Check if all criterion are within their respective threshold values.
@@ -137,26 +124,22 @@ std::map<int, double> calculate_criterion(Rcpp::NumericVector x, Rcpp::NumericVe
 //'
 //' @keywords internal
 //
-bool evaluate_criterion(std::map<int, double> criterion, Rcpp::List thresholds) {
+bool evaluate_criterion(Rcpp::NumericVector &criterion, Rcpp::List &thresholds) {
     // Compare clear skies criterion to threshold values.
     // All criterion must be between their respective thresholds (inclusive)
     // to return True (clear).
     // thresholds must be checked and ordered in R
     // i.e. must be length 5
-
-    {
-    Rcpp::List::iterator j = thresholds.begin();
-
-    for (std::map<int, double>::iterator i = criterion.begin(); i != criterion.end(); ++i, ++j) {
+    auto j = thresholds.begin();
+    for (auto i = criterion.begin(); i != criterion.end(); ++i, ++j) {
         // comparison may not work correctly if dereferenced iterators are
         // compared directly
         Rcpp::NumericVector bounds = *j;
-        double criteria = i->second;
+        double criteria = *i;
 
         if (criteria < min(bounds) || criteria > max(bounds)) {
             return false;
         }
-    }
     }
 
     return true;
@@ -197,8 +180,6 @@ bool evaluate_criterion(std::map<int, double> criterion, Rcpp::List thresholds) 
 // [[Rcpp::export]]
 Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs,
                               Rcpp::List thresholds, int window_len) {
-    // Results are not always accurate when window_len = 1
-
     int n = x.size();
 
     if (n != cs.size())
@@ -212,15 +193,14 @@ Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs,
     Rcpp::NumericVector obs(window_len);
     Rcpp::NumericVector pred(window_len);
 
-    {
-    Rcpp::NumericVector::iterator j = cs.begin();
-    Rcpp::LogicalVector::iterator k = clear.begin();
+    auto j = cs.begin();
+    auto k = clear.begin();
 
-    for (Rcpp::NumericVector::iterator i = x.begin(); i != x.end() - window_len + 1; ++i, ++j, ++k) {
+    for (auto i = x.begin(); i != x.end() - window_len + 1; ++i, ++j, ++k) {
         obs.assign(i, i + window_len);
         pred.assign(j, j + window_len);
 
-        std::map<int, double> criterion = calculate_criterion(obs, pred);
+        auto criterion = calculate_criterion(obs, pred);
         bool allclear = evaluate_criterion(criterion, thresholds);
 
         if (allclear) {
@@ -228,7 +208,6 @@ Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs,
         }
 
         Rcpp::checkUserInterrupt();
-    }
     }
 
     return clear;
@@ -246,8 +225,6 @@ Rcpp::LogicalVector clear_pts(Rcpp::NumericVector x, Rcpp::NumericVector cs,
 //' @export
 // [[Rcpp::export]]
 double rmse(Rcpp::NumericVector x, Rcpp::NumericVector y) {
-    // Root mean squared error
-
     double mse = mean(pow(x - y, 2));
     return sqrt(mse);
 }

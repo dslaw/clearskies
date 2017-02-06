@@ -4,7 +4,6 @@
 #include <numeric>     // iota
 #include <Rcpp.h>
 // [[Rcpp::plugins(cpp11)]]
-// c++11 required for lambdas and iota
 
 
 double calc_julian_day(double year, double dayofyear) {
@@ -12,7 +11,6 @@ double calc_julian_day(double year, double dayofyear) {
 }
 
 Rcpp::NumericVector julian_day(Rcpp::NumericVector dayofyear, Rcpp::NumericVector year) {
-
     int n_days = dayofyear.size();
     int n_years = year.size();
 
@@ -31,7 +29,6 @@ Rcpp::NumericVector julian_day(Rcpp::NumericVector dayofyear, Rcpp::NumericVecto
 }
 
 Rcpp::NumericVector universal_gmt(int interval, double tz) {
-
     if (interval > 60 || interval < 1) {
         throw std::range_error("Interval must be between 1 and 60");
     }
@@ -48,12 +45,9 @@ Rcpp::NumericVector universal_gmt(int interval, double tz) {
     // faster than using rep_len
     Rcpp::NumericVector hour(n);
 
-    {
-    Rcpp::IntegerVector::iterator it = unique_hours.begin();
-
-    for (Rcpp::NumericVector::iterator i = hour.begin(); i != hour.end(); i += step, ++it) {
+    auto it = unique_hours.begin();
+    for (auto i = hour.begin(); i != hour.end(); i += step, ++it) {
         std::fill(i, i + step, *it);
-    }
     }
 
     Rcpp::IntegerVector unique_minutes = Rcpp::seq_len(60);
@@ -69,7 +63,7 @@ Rcpp::NumericVector universal_gmt(int interval, double tz) {
     return hour;
 }
 
-void setnum(Rcpp::NumericVector & x, double c) {
+void setnum(Rcpp::NumericVector &x, double c) {
     std::transform(x.begin(), x.end(), x.begin(),
             [c](double a) {
                 a = a - c * floor(a/c);
@@ -108,7 +102,6 @@ void setnum(Rcpp::NumericVector & x, double c) {
 Rcpp::NumericVector zenith(Rcpp::NumericVector dayofyear, Rcpp::NumericVector year,
                            double tz, double latitude, double longitude,
                            int interval = 1) {
-
     double const deg2rad = M_PI/180;
     double const rad2deg = 180/M_PI;
 
