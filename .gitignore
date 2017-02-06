@@ -17,7 +17,4 @@ src/*.o
 src/*.so
 src/*.dll
 
-# WIP
-R/clearskymodels-staging.R
-
 src/symbols.rds
